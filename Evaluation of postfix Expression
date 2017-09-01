@@ -1,0 +1,74 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+struct stack
+{
+  int top;
+  unsigned capacity;
+  int *array;
+};
+struct stack* CreateStack(int capacity)
+{
+ struct stack *s=(struct stack*)malloc(sizeof(struct stack));
+ if(!s)
+    return NULL;
+ s->top=-1;
+ s->capacity=capacity;
+ s->array=(int*)malloc(s->capacity*sizeof(int));
+ if(!s->array)
+  return NULL;
+return s;
+}
+int IsEmptyStack(struct stack *s)
+{
+    return s->top==-1;
+}
+int peak(struct stack *s)
+{
+    return s->array[s->top];
+}
+int pop(struct stack *s)
+{
+    if(!IsEmptyStack(s))
+        return s->array[s->top--];
+ return -1;
+}
+void push(struct stack *s,int data)
+{
+    s->array[++s->top]=data;
+}
+int EvaluatepostfixExp(char *exp)
+{
+    int i,val1,val2;
+    struct stack *s=CreateStack(strlen(exp));
+    if(!s)
+        return -1;
+    for(i=0;exp[i];i++)
+    {
+        if(exp[i]>='0'&&exp[i]<='9')
+            push(s,exp[i]-'0');
+        else
+        {
+            val1=pop(s);
+            val2=pop(s);
+             switch(exp[i])
+             {
+             case '+': push(s,val2+val1);
+                       break;
+             case '-': push(s,val2-val1);
+                       break;
+             case '*': push(s,val2*val1);
+                       break;
+             case '/': push(s,val2/val1);
+                       break;
+             }
+        }
+    }
+return pop(s);
+}
+int main()
+{
+  char exp[]="231*+9-";
+  printf("%d\n",EvaluatepostfixExp(exp));
+  return 0;
+}
